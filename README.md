@@ -34,9 +34,9 @@ This script is used in the Tasker app to trigger SMS sending events, encrypt the
 
 1. Open the Tasker app and go to the Tasks section.
 2. Click the `+` button at the bottom right to create a new task.
-3. Select `JavaScript` as the action type.
+3. Click the `+` button at the bottom right to create a new action; Select `Code-JavaScriptlet` as the action type.
 4. Paste the code from `sms_sent.js` into the code box.
-5. Save the task and set the trigger condition (e.g., trigger when an SMS is received).
+5. Save the task and go to the Profiles tab to set the trigger condition (e.g., trigger when an SMS is received).
 
 ### 2. `sms_server.py` - Server-Side Script
 
@@ -44,7 +44,7 @@ This script is used to receive and store SMS content from the phone and supports
 
 #### Parameters to Adjust:
 
-- `SERVER_URL = "http://192.168.2.9:11111/msg";`: Server URL, ensure it matches the client configuration.
+- `serve(server, host="0.0.0.0", port=11111)`: Listening IP and port, ensure it matches the client configuration.
 
 #### Steps to Start the Server Script:
 
@@ -57,8 +57,8 @@ This script is used to receive and store SMS content from the phone and supports
    ```
    python sms_server.py
    ```
+3. Encrypted SMS messages are stored in ./msg.json.
 
-3. The server will run on `http://192.168.2.9:11111`.
 
 ### 3. `sms_get.py` - Python Client Script
 
@@ -84,7 +84,7 @@ This script is used to retrieve the latest SMS content from the server and decry
 
 ### 4. `sms_get.js` - Tampermonkey Script
 
-This script is used to retrieve SMS content from the server in the browser and automatically extract verification codes.
+This script is used to retrieve SMS content from the server in the browser, automatically extract verification code, and copy it to the clipboard.
 
 #### Parameters to Adjust:
 
