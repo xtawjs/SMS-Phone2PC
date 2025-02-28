@@ -34,7 +34,6 @@ function base64EncodeUnicode(str) {
        }));
 }
 
-var KEY = "mysecretkey";  // 约定的加解密密钥
 var xorResult = xorEncrypt(smsrb, KEY);
 var encryptedMsg = base64EncodeUnicode(xorResult);
 
