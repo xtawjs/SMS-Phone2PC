@@ -87,7 +87,7 @@ This script is used to retrieve the latest SMS content from the server and decry
 This script is used to retrieve SMS content from the server in the browser, automatically extract verification code, and copy it to the clipboard.
 
 #### Parameters to Adjust:
-
+-  `// @connect      192.168.2.9`
 - `const SERVER_URL = "http://192.168.2.9:11111/msg?user=test";`: Server URL and user ID, ensure it matches the server configuration.
 - `const KEY = "mysecretkey";`: Encryption/decryption key, ensure it matches the sender's configuration.
 
