@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短信查询</title>
+    <script>
+        function saveInputs() {
+            localStorage.setItem('user', document.getElementById('user').value);
+            localStorage.setItem('key', document.getElementById('key').value);
+            localStorage.setItem('server_url', document.getElementById('server_url').value);
+        }
+
+        function loadInputs() {
+            document.getElementById('user').value = localStorage.getItem('user') || '';
+            document.getElementById('key').value = localStorage.getItem('key') || '';
+            document.getElementById('server_url').value = localStorage.getItem('server_url') || 'http://127.0.0.1:11111/msg';
+        }
+
+        // Base64 解码
+        function base64DecodeUnicode(str) {
+            return decodeURIComponent(Array.prototype.map.call(atob(str), function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        // XOR 解密
+        function xorDecrypt(text, key) {
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            return result;
+        }
+
+        function getMessage() {
+            const user = document.getElementById('user').value;
+            const key = document.getElementById('key').value;
+            const server_url = document.getElementById('server_url').value;
+
+            fetch('/get_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `user=${encodeURIComponent(user)}&server_url=${encodeURIComponent(server_url)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').innerText = data.error;
+                } else {
+                    let encryptedMsg = data.message;
+                    if (encryptedMsg !== "暂无数据") {
+                        try {
+                            let decodedMsg = base64DecodeUnicode(encryptedMsg);
+                            let decryptedMsg = xorDecrypt(decodedMsg, key);
+                            document.getElementById('result').innerHTML = `
+                                <p>发件人: ${data.user}</p>
+                                <p>时间: ${data.timestamp}</p>
+                                <p>内容: ${decryptedMsg}</p>
+                            `;
+                        } catch (e) {
+                            document.getElementById('result').innerText = '解码失败';
+                        }
+                    } else {
+                        document.getElementById('result').innerText = '暂无数据';
+                    }
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = '请求失败: ' + error;
+            });
+        }
+
+        window.onload = loadInputs;
+    </script>
+</head>
+<body>
+    <h1>短信查询</h1>
+    <form onsubmit="event.preventDefault(); getMessage(); saveInputs();">
+        <label for="user">用户:</label>
+        <input type="text" id="user" name="user" required><br><br>
+        <label for="key">密钥:</label>
+        <input type="text" id="key" name="key" required><br><br>
+        <label for="server_url">服务器地址:</label>
+        <input type="text" id="server_url" name="server_url" required><br><br>
+        <button type="submit">获取短信</button>
+    </form>
+    <div id="result"></div>
+</body>
+</html>

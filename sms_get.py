@@ -2,11 +2,12 @@ import requests
 import base64
 
 TARGET_USER = "test"  # 请将此处替换为你需要查询的用户
-SERVER_URL = "http://192.168.2.9:11111/msg"  # 修改为 Flask 服务器地址
+SERVER_URL = "http://server_ip:11111/msg"  # 修改为 Flask 服务器地址
 KEY = "mysecretkey"  # 约定的加解密密钥
 
 def xor_encrypt_decrypt(text, key):
     """简单的异或加解密函数"""
+    print(text)
     return ''.join(chr(ord(c) ^ ord(key[i % len(key)])) for i, c in enumerate(text))
 
 try:
@@ -15,6 +16,7 @@ try:
     if response.status_code == 200:
         data = response.json()
         encrypted_msg = data.get('msg', '')
+        print(encrypted_msg)
         # 如果返回的数据为"暂无数据"，则不进行解密
         if encrypted_msg != "暂无数据":
             try:
